@@ -8,7 +8,39 @@ defmodule Identicon do
     |> hash_input
     |> pick_color
     |> build_grid
+    |> filter_odd_squares
+    |> build_pixel_map
 
+  end
+
+  def build_pixel_map(image) do
+
+    %Identicon.Image{grid: grid} = image
+
+    pixel_map = Enum.map grid, fn({_code, index}) ->
+      horizontal = rem(index, 5) * 50
+      vertical = div(index, 5) * 50
+
+      top_left = {horizontal, vertical}
+      bottom_right = {horizontal + 50, vertical + 50}
+
+      {top_left, bottom_right}
+    end
+
+    %Identicon.Image{image | pixel_map: pixel_map}
+  end
+
+  def filter_odd_squares(image) do
+    %Identicon.Image{grid: grid} = image
+    grid = Enum.filter grid, fn({code, _index}) ->
+      # calcualte remainer if divided by 2
+      rem(code, 2) == 0    
+      # will return grid with even number
+    end
+
+
+    #Return an updated version of grid
+    %Identicon.Image{image | grid: grid}
   end
 
   def build_grid(image) do
